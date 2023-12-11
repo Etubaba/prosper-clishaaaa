@@ -1,0 +1,29 @@
+name: Deploy Production
+on:
+  push:
+    branches: ['main']
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Push to server and deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          command_timeout: 200m
+
+          script: |
+            cd /var/www
+            cd clisha-microservice
+            git fetch --all
+            git pull origin main
+            echo 'Updates successfully pulled from MAIN branch'
+            docker rm -f core admin task commerce gateway company
+            sudo docker compose up --build --detach
+            echo 'Container is up and running'
+            sudo docker system prune -f
+            echo 'Container pruned successfully'
+            sudo docker ps

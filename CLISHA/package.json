@@ -1,0 +1,26 @@
+{
+  "name": "clisha-gateway",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-http-proxy": "^1.6.3",
+    "express-validator": "^6.14.2",
+    "http-proxy-middleware": "^2.0.6",
+    "fast-gateway": "^3.4.5",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.20",
+    "proxy": "^1.0.2",
+    "sequelize": "^6.25.5"
+  }
+}

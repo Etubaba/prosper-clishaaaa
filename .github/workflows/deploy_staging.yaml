@@ -1,0 +1,29 @@
+name: Deploy Staging
+on:
+  push:
+    branches: ['staging']
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Push to server and deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_USERNAME }}
+          password: ${{ secrets.STAGING_PASSWORD }}
+          command_timeout: 200m
+
+          script: |
+            cd /var/www
+            cd clisha-microservice
+            git fetch --all
+            git pull origin staging
+            echo 'Updates successfully pulled from STAGING branch'
+            docker rm -f core admin company task commerce gateway 
+            sudo docker compose up --build --detach
+            echo 'Container is up and running'
+            sudo docker system prune -f
+            echo 'Container pruned successfully'
+            sudo docker ps

@@ -1,0 +1,6 @@
+*.env*
+node_modules*
+assets*
+*.old.js
+package-lock.json
+yarn-lock.json

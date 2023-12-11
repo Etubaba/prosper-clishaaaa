@@ -1,0 +1,164 @@
+version: '3.8'
+
+services:
+  gateway:
+    depends_on:
+      - core
+      - task
+      - admin
+      - commerce
+      - company
+    restart: on-failure
+    # restart_policy:
+    #     condition: any
+    #     delay: 52
+    #     max_attempts: 5
+    #     window: 120s
+    container_name: gateway
+    build: ./CLISHA
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    volumes:
+      - ./CLISHA:/CLISHA
+    env_file:
+      - ./.env
+    ports:
+      - target: 4100
+        published: 8000
+        protocol: tcp
+        mode: host
+    command: npm run start
+    networks:
+      - my_network
+
+  core:
+    restart: on-failure
+    # restart_policy:
+    #     condition: any
+    #     delay: 52
+    #     max_attempts: 5
+    #     window: 120s
+    container_name: core
+    build: ./CORE
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    volumes:
+      - ./CORE:/CORE
+    env_file:
+      - ./.env
+    ports:
+      - target: 4101
+        published: 8001
+        protocol: tcp
+        mode: host
+    command: npm run start
+    networks:
+      - my_network
+
+  task:
+    depends_on:
+      - core
+    restart: on-failure
+    # restart_policy:
+    #     condition: any
+    #     delay: 52
+    #     max_attempts: 5
+    #     window: 120s
+    container_name: task
+    build: ./Task
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    volumes:
+      - ./Task:/Task
+    env_file:
+      - ./.env
+    ports:
+      - target: 4103
+        published: 8003
+        protocol: tcp
+        mode: host
+    command: npm run start
+    networks:
+      - my_network
+
+  admin:
+    depends_on:
+      - company
+    restart: on-failure
+    # restart_policy:
+    #     condition: any
+    #     delay: 52
+    #     max_attempts: 5
+    #     window: 120s
+    container_name: admin
+    build: ./ADMIN
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    volumes:
+      - ./Admin:/Admin
+    env_file:
+      - ./.env
+    ports:
+      - target: 4102
+        published: 8002
+        protocol: tcp
+        mode: host
+    command: npm run start
+    networks:
+      - my_network
+
+  commerce:
+    depends_on:
+      - task
+    restart: on-failure
+    # restart_policy:
+    #     condition: any
+    #     delay: 52
+    #     max_attempts: 5
+    #     window: 120s
+    container_name: commerce
+    build: ./Commerce
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    volumes:
+      - ./Commerce:/Commerce
+    env_file:
+      - ./.env
+    ports:
+      - target: 4104
+        published: 8004
+        protocol: tcp
+        mode: host
+    command: npm run start
+    networks:
+      - my_network
+
+  company:
+    depends_on:
+      - commerce
+    restart: on-failure
+    # restart_policy:
+    #     condition: any
+    #     delay: 52
+    #     max_attempts: 5
+    #     window: 120s
+    container_name: company
+    build: ./Company
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    volumes:
+      - ./Company:/Company
+    env_file:
+      - ./.env
+    ports:
+      - target: 4105
+        published: 8005
+        protocol: tcp
+        mode: host
+    command: npm run start
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge
